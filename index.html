@@ -1,839 +1,362 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Widget Calendario — Reporte de Adopción</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adopción Widget Traslados · Civitatis</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Montserrat', Arial, sans-serif; background: #f7f7f9; color: #1a1a2e; min-height: 100vh; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Montserrat',sans-serif;background:#f6f7f9;color:#1a1a2e;}
+.wrap{max-width:1200px;margin:0 auto;background:#fff;min-height:100vh;}
+.tabs{display:flex;background:#fff;border-bottom:1px solid #ebebeb;padding:0 36px;}
+.tab{padding:14px 18px;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;border-bottom:3px solid transparent;}
+.tab.active{color:#ea0558;border-bottom:3px solid #ea0558;}
+.page{display:none;padding:24px 36px 50px;}
+.page.active{display:block;}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{background:#fafafa;font-size:10.5px;text-transform:uppercase;color:#6b7280;letter-spacing:0.5px;padding:10px 12px;text-align:left;}
+thead th.r{text-align:right;}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;}
+@media(max-width:900px){.grid5{grid-template-columns:repeat(2,1fr);}.grid2,.grid3{grid-template-columns:1fr;}}
+</style></head><body><div class="wrap">
 
-.header {
-  background: linear-gradient(135deg, #ea0558 0%, #c4004a 100%);
-  padding: 20px 36px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-.header-brand { display: flex; align-items: center; gap: 14px; }
-.logo-badge { background: #fff; color: #ea0558; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 6px; }
-.header-title h1 { font-size: 20px; font-weight: 700; color: #fff; }
-.header-title p { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 3px; }
-.header-meta { text-align: right; font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.7; }
-.header-meta strong { color: #fff; }
+<div style="background:linear-gradient(135deg,#ea0558 0%,#c4004a 100%);padding:20px 36px;display:flex;justify-content:space-between;align-items:center;">
+<div style="display:flex;align-items:center;gap:14px;">
+<span style="background:#fff;color:#ea0558;font-weight:700;padding:5px 12px;border-radius:6px;font-size:13px;">civitatis</span>
+<div><div style="color:#fff;font-size:20px;font-weight:700;">Adopción · Widget de Traslados</div>
+<div style="color:rgba(255,255,255,0.75);font-size:12px;">Análisis de creación de widgets por afiliados desde el lanzamiento</div></div></div>
+<div style="text-align:right;color:rgba(255,255,255,0.8);font-size:11px;line-height:1.7;">
+Activación: <b style="color:#fff;">12 mar 2026</b><br>Periodo: <b style="color:#fff;">12 mar – 20 may 2026</b><br>Total widgets: <b style="color:#fff;">191</b></div></div>
 
-.exec-bar { background: #fff0f3; border-bottom: 1px solid rgba(234,5,88,0.12); padding: 13px 36px; font-size: 12.5px; line-height: 1.6; }
-.exec-bar strong { color: #ea0558; font-weight: 700; }
+<div style="background:#fff0f3;border-bottom:1px solid rgba(234,5,88,0.12);padding:13px 36px;font-size:12.5px;line-height:1.6;">
+Desde su activación el <strong style="color:#ea0558">12 de marzo de 2026</strong>, el widget de traslados acumula <strong style="color:#ea0558">191 widgets</strong> creados por <strong style="color:#ea0558">68 afiliados</strong> sobre <strong style="color:#ea0558">80 destinos</strong>. El idioma líder es <strong style="color:#ea0558">Español</strong> (63.9% del total). Pico diario el <strong style="color:#ea0558">2026-03-20</strong> con 31 widgets; mejor semana <strong style="color:#ea0558">S2</strong>. Concentración top-2 afiliados: <strong style="color:#ea0558">22.0%</strong>.</div>
 
-.tab-bar { background: #fff; border-bottom: 1px solid #ebebeb; padding: 0 36px; display: flex; gap: 4px; }
-.tab-btn { padding: 14px 18px; font-size: 13px; font-weight: 600; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
-.tab-btn:hover { color: #1a1a2e; }
-.tab-btn.active { color: #ea0558; border-bottom-color: #ea0558; }
+<div class="tabs">
+<div class="tab active" onclick="show(0,this)">📊 Resumen Global</div>
+<div class="tab" onclick="show(1,this)">🌍 Por Idioma</div>
+<div class="tab" onclick="show(2,this)">🤝 Afiliados</div>
+<div class="tab" onclick="show(3,this)">🎨 Análisis UX</div></div>
 
-.tab-content { display: none; padding: 28px 36px 40px; }
-.tab-content.active { display: block; }
-
-/* KPI */
-.kpi-strip { display: grid; gap: 14px; margin-bottom: 24px; }
-.kpi-card { background: #fff; border-radius: 10px; padding: 18px 20px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04); position: relative; overflow: hidden; border-top: 3px solid #ea0558; }
-.kpi-card.green  { border-top-color: #16a34a; }
-.kpi-card.blue   { border-top-color: #1a73e8; }
-.kpi-card.orange { border-top-color: #d97706; }
-.kpi-card.purple { border-top-color: #7c3aed; }
-.kpi-dot { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #6b7280; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
-.kpi-dot::before { content: '●'; color: #ea0558; font-size: 9px; }
-.kpi-card.green  .kpi-dot::before { color: #16a34a; }
-.kpi-card.blue   .kpi-dot::before { color: #1a73e8; }
-.kpi-card.orange .kpi-dot::before { color: #d97706; }
-.kpi-card.purple .kpi-dot::before { color: #7c3aed; }
-.kpi-value { font-size: 34px; font-weight: 700; color: #ea0558; line-height: 1; letter-spacing: -1px; }
-.kpi-card.green  .kpi-value { color: #16a34a; }
-.kpi-card.blue   .kpi-value { color: #1a73e8; }
-.kpi-card.orange .kpi-value { color: #d97706; }
-.kpi-card.purple .kpi-value { color: #7c3aed; }
-.kpi-sub { font-size: 11.5px; color: #6b7280; margin-top: 5px; }
-.kpi-badge { display: inline-block; margin-top: 8px; background: #fff0f3; color: #ea0558; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-.kpi-card.green  .kpi-badge { background: #f0fdf4; color: #16a34a; }
-.kpi-card.blue   .kpi-badge { background: #eff6ff; color: #1a73e8; }
-.kpi-card.orange .kpi-badge { background: #fffbeb; color: #d97706; }
-.kpi-card.purple .kpi-badge { background: #f5f3ff; color: #7c3aed; }
-.kpi-icon-bg { position: absolute; right: 10px; bottom: 6px; font-size: 42px; opacity: 0.06; pointer-events: none; }
-
-/* CHARTS */
-.chart-row { display: grid; gap: 16px; margin-bottom: 16px; }
-.chart-row.two   { grid-template-columns: 1fr 1fr; }
-.chart-row.one   { grid-template-columns: 1fr; }
-.chart-row.three { grid-template-columns: 1fr 1fr 1fr; }
-.chart-row.four  { grid-template-columns: 1fr 1fr 1fr 1fr; }
-.chart-card { background: #fff; border-radius: 10px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04); }
-.chart-card h3 { font-size: 13.5px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
-.chart-card .chart-sub { font-size: 11.5px; color: #6b7280; margin-bottom: 18px; }
-.chart-wrap { position: relative; height: 240px; }
-.chart-wrap.tall { height: 300px; }
-.chart-wrap.short { height: 180px; }
-
-/* NOTE */
-.note-box { border-radius: 8px; padding: 11px 16px; font-size: 12px; color: #1a1a2e; margin-bottom: 18px; line-height: 1.55; }
-.note-box.yellow { background: #fffbeb; border: 1px solid rgba(217,119,6,0.2); }
-.note-box.yellow strong { color: #d97706; }
-.note-box.pink { background: #fff0f3; border: 1px solid rgba(234,5,88,0.15); }
-.note-box.pink strong { color: #ea0558; }
-.note-box.green { background: #f0fdf4; border: 1px solid rgba(22,163,74,0.2); }
-.note-box.green strong { color: #16a34a; }
-
-/* TABLE */
-.table-card { background: #fff; border-radius: 10px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 16px; }
-.table-card h3 { font-size: 13.5px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
-.table-card .chart-sub { font-size: 11.5px; color: #6b7280; margin-bottom: 18px; }
-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-thead th { text-align: left; padding: 9px 14px; font-size: 10.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f0f0f0; background: #fafafa; }
-tbody td { padding: 11px 14px; border-bottom: 1px solid #f5f5f5; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #fff0f3; }
-.rank { font-weight: 700; color: #ea0558; }
-.bar-row { display: flex; align-items: center; gap: 8px; }
-.bar-track { flex: 1; height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; background: #ea0558; border-radius: 3px; }
-.pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; }
-.pill-es { background: #fff0f3; color: #ea0558; }
-.pill-it { background: #eff6ff; color: #1a73e8; }
-.pill-pt { background: #f0fdf4; color: #16a34a; }
-.pill-en { background: #fffbeb; color: #d97706; }
-.pill-fr { background: #f5f3ff; color: #7c3aed; }
-
-/* COLOR SWATCH */
-.color-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.1); vertical-align: middle; margin-right: 6px; }
-
-.section-label { display: flex; align-items: center; gap: 8px; font-size: 10.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-.section-label::before { content: ''; display: inline-block; width: 3px; height: 13px; background: #ea0558; border-radius: 2px; }
-
-/* UX STAT ROW */
-.ux-stat { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
-.ux-stat:last-child { border-bottom: none; }
-.ux-stat-label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.ux-stat-bar { flex: 1; margin: 0 16px; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-.ux-stat-bar-fill { height: 100%; border-radius: 3px; }
-.ux-stat-pct { font-weight: 700; font-size: 13px; min-width: 44px; text-align: right; }
-
-/* DRILLDOWN MODAL */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(26,26,46,0.55); z-index: 1000;
-  align-items: center; justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-.modal-card {
-  background: #fff; border-radius: 14px; width: 90%; max-width: 580px;
-  max-height: 80vh; display: flex; flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  animation: modalIn 0.18s ease;
-}
-@keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.modal-header {
-  padding: 18px 22px 14px; border-bottom: 1px solid #f0f0f0;
-  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-}
-.modal-header h2 { font-size: 14px; font-weight: 700; color: #1a1a2e; }
-.modal-header .modal-meta { font-size: 11.5px; color: #6b7280; margin-top: 3px; }
-.modal-close {
-  background: #f5f5f5; border: none; border-radius: 50%; width: 30px; height: 30px;
-  cursor: pointer; font-size: 16px; color: #6b7280; display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: background 0.15s;
-}
-.modal-close:hover { background: #fff0f3; color: #ea0558; }
-.modal-body { overflow-y: auto; padding: 0 22px 18px; flex: 1; }
-.modal-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 14px; }
-.modal-table thead th {
-  text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700;
-  color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;
-  border-bottom: 2px solid #f0f0f0; background: #fafafa; position: sticky; top: 0;
-}
-.modal-table tbody td { padding: 9px 12px; border-bottom: 1px solid #f5f5f5; }
-.modal-table tbody tr:last-child td { border-bottom: none; }
-.modal-table tbody tr:hover td { background: #fff0f3; }
-.modal-rank { font-weight: 700; color: #ea0558; }
-.modal-bar-row { display: flex; align-items: center; gap: 7px; }
-.modal-bar-track { flex: 1; height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-.modal-bar-fill { height: 100%; background: #ea0558; border-radius: 3px; }
-.clickable-hint { font-size: 10px; color: #9ca3af; text-align: center; margin-top: 6px; }
-
-@media (max-width: 900px) {
-  .chart-row.two, .chart-row.three, .chart-row.four { grid-template-columns: 1fr; }
-  .header, .tab-content { padding: 16px 20px; }
-  .tab-bar { padding: 0 20px; overflow-x: auto; }
-}
-</style>
-</head>
-<body>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-brand">
-    <span class="logo-badge">civitatis</span>
-    <div class="header-title">
-      <h1>Widget Calendario · Reporte de Adopción</h1>
-      <p>Análisis de creación · Activación 24 abril 2026 · Todos los afiliados</p>
-    </div>
-  </div>
-  <div class="header-meta">
-    Periodo: <strong>24 abr → 20 may 2026</strong><br>
-    Días activos: <strong>26 días</strong><br>
-    Afiliados únicos: <strong>29</strong>
-  </div>
+<!-- TAB 0 -->
+<div class="page active">
+<div style="display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-top:6px;"><span style="width:3px;height:13px;background:#ea0558;border-radius:2px;display:inline-block;"></span>Indicadores principales</div>
+<div class="grid5">
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #ea0558;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Total widgets</div>
+<div style="font-size:34px;font-weight:700;color:#ea0558;line-height:1;letter-spacing:-1px;">191</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Creados desde 12 mar</div>
+<div style="display:inline-block;margin-top:8px;background:#fff0f3;color:#ea0558;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">📈 Periodo completo</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">🚐</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #16a34a;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Afiliados únicos</div>
+<div style="font-size:34px;font-weight:700;color:#16a34a;line-height:1;letter-spacing:-1px;">68</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Han creado al menos 1</div>
+<div style="display:inline-block;margin-top:8px;background:#f0fdf4;color:#16a34a;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">🌱 Adopción</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">👥</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #1a73e8;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Media diaria</div>
+<div style="font-size:34px;font-weight:700;color:#1a73e8;line-height:1;letter-spacing:-1px;">4.24</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">sobre 45 días activos</div>
+<div style="display:inline-block;margin-top:8px;background:#eff6ff;color:#1a73e8;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">⚡ Ritmo</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">📅</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #d97706;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Idioma líder</div>
+<div style="font-size:34px;font-weight:700;color:#d97706;line-height:1;letter-spacing:-1px;">Español</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">122 widgets</div>
+<div style="display:inline-block;margin-top:8px;background:#fffbeb;color:#d97706;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">63.9% del total</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">🌍</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #7c3aed;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Widgets/afiliado</div>
+<div style="font-size:34px;font-weight:700;color:#7c3aed;line-height:1;letter-spacing:-1px;">2.81</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Media por afiliado</div>
+<div style="display:inline-block;margin-top:8px;background:#f5f3ff;color:#7c3aed;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">🎯 Engagement</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">📊</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-top:6px;"><span style="width:3px;height:13px;background:#ea0558;border-radius:2px;display:inline-block;"></span>Evolución temporal</div>
+<div class="card">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Evolución de creación de widgets</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Widgets por día desde la activación (12 mar) · línea punteada gris = media diaria (4.24) · línea azul = progresión acumulada · <strong style="color:#ea0558">haz clic en un punto</strong> para ver los afiliados de ese día</div>
+<div style="height:340px;position:relative;"><canvas id="evoChart"></canvas></div>
+<div id="dayDetail" style="margin-top:14px;padding:14px 16px;background:#fafafa;border:1px solid #ebebeb;border-radius:8px;font-size:12.5px;color:#6b7280;">👆 Haz clic en un punto del gráfico para ver qué afiliados crearon widgets ese día y cuántos.</div></div>
+<div class="card" style="margin-top:18px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Distribución por idioma</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Reparto del total de widgets</div>
+<div style="height:300px;position:relative;"><canvas id="langDoughnut"></canvas></div></div>
+<div style="margin-top:16px;background:#fffbeb;border:1px solid rgba(217,119,6,0.2);border-radius:8px;padding:11px 16px;font-size:12px;">
+<strong style="color:#d97706">Nota:</strong> El pico del 2026-03-20 (31 widgets) y la fuerte semana S2 reflejan la adopción inicial tras el lanzamiento. El ritmo se estabiliza a partir de abril.</div>
 </div>
 
-<!-- EXEC SUMMARY -->
-<div class="exec-bar">
-  📈 <strong>Resumen ejecutivo.</strong>
-  Desde su activación el <strong>24 de abril</strong>, se han creado <strong>439 widgets</strong> en 5 idiomas.
-  El <strong>español lidera (61,7%)</strong>, seguido del <strong>italiano (31,4%)</strong>, con un pico de <strong>103 widgets el 12 de mayo</strong>.
-  Se han configurado <strong>325 destinos únicos</strong>.
+<!-- TAB 1 -->
+<div class="page">
+<div style="display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-top:6px;"><span style="width:3px;height:13px;background:#ea0558;border-radius:2px;display:inline-block;"></span>Widgets por idioma</div>
+<div class="grid2">
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Reparto por idioma</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">% de widgets creados en cada idioma</div>
+<div style="height:300px;position:relative;"><canvas id="langPie"></canvas></div></div>
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Afiliados activos por idioma</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Nº de afiliados únicos que crean en cada idioma</div>
+<div style="height:300px;position:relative;"><canvas id="langAffBar"></canvas></div></div>
+</div>
+<div class="card">
+<div style="font-size:13.5px;font-weight:700;margin-bottom:12px;">Detalle por idioma</div>
+<table><thead><tr><th>Idioma</th><th class="r">Widgets</th><th class="r">% total</th><th class="r">Afiliados</th><th>Distribución</th></tr></thead>
+<tbody><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:10px 12px;font-weight:600;">Español</td>
+<td style="padding:10px 12px;text-align:right;font-weight:700;color:#ea0558;">122</td>
+<td style="padding:10px 12px;text-align:right;">63.9%</td>
+<td style="padding:10px 12px;text-align:right;">50</td>
+<td style="padding:10px 12px;width:160px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:64%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:10px 12px;font-weight:600;">Italiano</td>
+<td style="padding:10px 12px;text-align:right;font-weight:700;color:#ea0558;">49</td>
+<td style="padding:10px 12px;text-align:right;">25.7%</td>
+<td style="padding:10px 12px;text-align:right;">19</td>
+<td style="padding:10px 12px;width:160px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:26%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:10px 12px;font-weight:600;">Portugués</td>
+<td style="padding:10px 12px;text-align:right;font-weight:700;color:#ea0558;">18</td>
+<td style="padding:10px 12px;text-align:right;">9.4%</td>
+<td style="padding:10px 12px;text-align:right;">4</td>
+<td style="padding:10px 12px;width:160px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:9%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:10px 12px;font-weight:600;">Inglés</td>
+<td style="padding:10px 12px;text-align:right;font-weight:700;color:#ea0558;">2</td>
+<td style="padding:10px 12px;text-align:right;">1.0%</td>
+<td style="padding:10px 12px;text-align:right;">2</td>
+<td style="padding:10px 12px;width:160px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:1%;"></div></div></td></tr></tbody></table></div>
+<div style="margin-top:16px;background:#fff0f3;border:1px solid rgba(234,5,88,0.15);border-radius:8px;padding:11px 16px;font-size:12px;">
+<strong style="color:#ea0558">Nota:</strong> Español e italiano concentran el 89.5% de los widgets. El mercado portugués, aunque menor en volumen, lo generan solo 4 afiliados (alta media por afiliado).</div>
 </div>
 
-<!-- TABS -->
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="showTab('overview',this)">📊 Resumen Global</button>
-  <button class="tab-btn" onclick="showTab('lang',this)">🌍 Por Idioma</button>
-  <button class="tab-btn" onclick="showTab('affiliates',this)">🤝 Afiliados</button>
-  <button class="tab-btn" onclick="showTab('ux',this)">🎨 Análisis UX</button>
+<!-- TAB 2 -->
+<div class="page">
+<div style="display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-top:6px;"><span style="width:3px;height:13px;background:#ea0558;border-radius:2px;display:inline-block;"></span>Concentración de la adopción</div>
+<div class="grid3">
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #ea0558;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Afiliados activos</div>
+<div style="font-size:34px;font-weight:700;color:#ea0558;line-height:1;letter-spacing:-1px;">68</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Crearon ≥1 widget</div>
+<div style="display:inline-block;margin-top:8px;background:#fff0f3;color:#ea0558;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">🤝 Base</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">👥</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #16a34a;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Destinos únicos</div>
+<div style="font-size:34px;font-weight:700;color:#16a34a;line-height:1;letter-spacing:-1px;">80</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Cubiertos por widgets</div>
+<div style="display:inline-block;margin-top:8px;background:#f0fdf4;color:#16a34a;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">🗺️ Cobertura</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">📍</div></div>
+<div style="background:#fff;border-radius:10px;padding:18px 20px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 8px rgba(0,0,0,0.04);border-top:3px solid #d97706;position:relative;overflow:hidden;">
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#6b7280;margin-bottom:10px;">● Concentración top-2</div>
+<div style="font-size:34px;font-weight:700;color:#d97706;line-height:1;letter-spacing:-1px;">22.0%</div>
+<div style="font-size:11.5px;color:#6b7280;margin-top:5px;">Del total de widgets</div>
+<div style="display:inline-block;margin-top:8px;background:#fffbeb;color:#d97706;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;">⚠️ Dependencia</div>
+<div style="position:absolute;right:10px;bottom:6px;font-size:42px;opacity:0.06;">🏆</div></div>
+</div>
+<div class="grid2">
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Top 10 afiliados · widgets</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Afiliados que más widgets han creado</div>
+<div style="height:300px;position:relative;"><canvas id="affBar"></canvas></div></div>
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Top 10 afiliados · destinos</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Variedad de destinos por afiliado</div>
+<div style="height:300px;position:relative;"><canvas id="affDestBar"></canvas></div></div>
+</div>
+<div class="card">
+<div style="font-size:13.5px;font-weight:700;margin-bottom:12px;">Ranking de afiliados</div>
+<table><thead><tr><th>#</th><th>Afiliado</th><th>ID</th><th class="r">Widgets</th><th>Idioma (nº)</th><th class="r">Destinos</th><th>Distribución</th></tr></thead>
+<tbody><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">1</td>
+<td style="padding:9px 12px;font-weight:600;">surfingtheplanet</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">1050</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">24</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (21), IT (3)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">19</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:100%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">2</td>
+<td style="padding:9px 12px;font-weight:600;">Viajeros Callejeros</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">1051</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">18</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (15), IT (2), EN (1)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">7</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:75%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">3</td>
+<td style="padding:9px 12px;font-weight:600;">italia-polonia</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">101163</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">10</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">IT (10)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">5</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:42%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">4</td>
+<td style="padding:9px 12px;font-weight:600;">vamospranovayork</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">110110</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">9</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">PT (9)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">3</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:38%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">5</td>
+<td style="padding:9px 12px;font-weight:600;">viajaleaks</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">10537</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">8</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (8)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">7</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:33%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">6</td>
+<td style="padding:9px 12px;font-weight:600;">brasilnaitalia</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">104224</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">7</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">PT (7)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">5</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:29%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">7</td>
+<td style="padding:9px 12px;font-weight:600;">lasardegna.es lasicilia.es lacroacia.es</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">8636</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">7</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (7)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">6</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:29%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">8</td>
+<td style="padding:9px 12px;font-weight:600;">indiautentica</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">4059</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">6</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (6)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">6</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:25%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">9</td>
+<td style="padding:9px 12px;font-weight:600;">gemelosviajeros</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">100866</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">6</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">ES (6)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">4</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:25%;"></div></div></td></tr><tr style="border-bottom:1px solid #f5f5f5;" onmouseover="this.style.background='#fff0f3'" onmouseout="this.style.background='#fff'">
+<td style="padding:9px 12px;color:#ea0558;font-weight:700;">10</td>
+<td style="padding:9px 12px;font-weight:600;">inviaggiodasola.com</td>
+<td style="padding:9px 12px;color:#9ca3af;font-size:11.5px;">8089</td>
+<td style="padding:9px 12px;text-align:right;font-weight:700;">5</td>
+<td style="padding:9px 12px;font-size:11.5px;color:#374151;">IT (5)</td>
+<td style="padding:9px 12px;text-align:right;font-weight:600;color:#16a34a;">5</td>
+<td style="padding:9px 12px;width:150px;"><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#ea0558;height:8px;border-radius:4px;width:21%;"></div></div></td></tr></tbody></table></div>
+<div style="margin-top:16px;background:#fffbeb;border:1px solid rgba(217,119,6,0.2);border-radius:8px;padding:11px 16px;font-size:12px;">
+<strong style="color:#d97706">Nota:</strong> Los dos afiliados líderes (1050 y 1051) generan el 22.0% del total. El afiliado 1050 destaca también en variedad con 19 destinos distintos.</div>
 </div>
 
-<!-- ══════ OVERVIEW ══════ -->
-<div id="tab-overview" class="tab-content active">
-  <div class="section-label" style="margin-bottom:14px">Indicadores principales</div>
-  <div class="kpi-strip" style="grid-template-columns:repeat(5,1fr)">
-    <div class="kpi-card">
-      <div class="kpi-dot">Total widgets</div>
-      <div class="kpi-value">439</div>
-      <div class="kpi-sub">23 abr → 20 may</div>
-      <div class="kpi-badge">desde activación</div>
-      <div class="kpi-icon-bg">📊</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-dot">Afiliados únicos</div>
-      <div class="kpi-value">29</div>
-      <div class="kpi-sub">han creado ≥1 widget</div>
-      <div class="kpi-badge">de la base activa</div>
-      <div class="kpi-icon-bg">🤝</div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-dot">Media diaria</div>
-      <div class="kpi-value">16,9</div>
-      <div class="kpi-sub">widgets/día</div>
-      <div class="kpi-badge">sobre 26 días activos</div>
-      <div class="kpi-icon-bg">📅</div>
-    </div>
-    <div class="kpi-card orange">
-      <div class="kpi-dot">Idioma líder</div>
-      <div class="kpi-value">ES</div>
-      <div class="kpi-sub">271 widgets</div>
-      <div class="kpi-badge">61,7% del total</div>
-      <div class="kpi-icon-bg">🌍</div>
-    </div>
-    <div class="kpi-card purple">
-      <div class="kpi-dot">Media widget/afiliado</div>
-      <div class="kpi-value">15,1</div>
-      <div class="kpi-sub">439 widgets · 29 afiliados</div>
-      <div class="kpi-badge">alta concentración</div>
-      <div class="kpi-icon-bg">📈</div>
-    </div>
-  </div>
-
-  <div class="note-box pink">
-    <strong>Nota:</strong> Se detectaron 3 widgets creados el 23 de abril (acceso anticipado / testing), un día antes de la activación oficial el <strong>24 de abril</strong>.
-  </div>
-
-  <div class="chart-row two">
-    <div class="chart-card">
-      <h3>Widgets por idioma</h3>
-      <div class="chart-sub">Distribución total desde activación</div>
-      <div class="chart-wrap"><canvas id="c-lang-overview"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Actividad semanal</h3>
-      <div class="chart-sub">Desde activación · W4 = semana parcial hasta 20 may</div>
-      <div class="chart-wrap"><canvas id="c-week-overview"></canvas></div>
-    </div>
-  </div>
-  <div class="chart-row one">
-    <div class="chart-card">
-      <h3>Actividad diaria</h3>
-      <div class="chart-sub">Widgets creados por día · línea punteada = media (16,9/día)</div>
-      <div class="chart-wrap tall"><canvas id="c-daily-overview"></canvas></div>
-    </div>
-  </div>
+<!-- TAB 3 -->
+<div class="page">
+<div style="display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-top:6px;"><span style="width:3px;height:13px;background:#ea0558;border-radius:2px;display:inline-block;"></span>Configuración visual de los widgets</div>
+<div class="grid3">
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Tamaño del widget</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Proporción elegida</div>
+<div style="height:240px;position:relative;"><canvas id="sizeChart"></canvas></div></div>
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Tipografía</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Fuente principal vs otras</div>
+<div style="height:240px;position:relative;"><canvas id="fontChart"></canvas></div></div>
+<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:18px 20px;">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Color del botón</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Colores más usados</div>
+<div style="height:240px;position:relative;"><canvas id="colorChart"></canvas></div></div>
+</div>
+<div class="grid2">
+<div class="card"><div style="font-size:13.5px;font-weight:700;margin-bottom:14px;">Preferencias dominantes</div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#374151;font-weight:600;">Tamaño: <span style="color:#ea0558;">2:3</span></span><span style="color:#6b7280;font-weight:700;">55%</span></div><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#7c3aed;height:8px;border-radius:4px;width:55%;"></div></div></div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#374151;font-weight:600;">Fuente: <span style="color:#ea0558;">montserrat</span></span><span style="color:#6b7280;font-weight:700;">94%</span></div><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#7c3aed;height:8px;border-radius:4px;width:94%;"></div></div></div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#374151;font-weight:600;">Bordes botón: <span style="color:#ea0558;">Redondeado</span></span><span style="color:#6b7280;font-weight:700;">96%</span></div><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#7c3aed;height:8px;border-radius:4px;width:96%;"></div></div></div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#374151;font-weight:600;">Color botón: <span style="color:#ea0558;">#EA0558</span></span><span style="color:#6b7280;font-weight:700;">73%</span></div><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#7c3aed;height:8px;border-radius:4px;width:73%;"></div></div></div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#374151;font-weight:600;">Con imagen: <span style="color:#ea0558;">Sí</span></span><span style="color:#6b7280;font-weight:700;">85%</span></div><div style="background:#f0f0f0;border-radius:4px;height:8px;"><div style="background:#7c3aed;height:8px;border-radius:4px;width:85%;"></div></div></div></div>
+<div class="card">
+<div style="font-size:13.5px;font-weight:700;color:#1a1a2e;">Bordes del botón</div>
+<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">Redondeado vs cuadrado</div>
+<div style="height:200px;position:relative;"><canvas id="radiusChart"></canvas></div></div>
+</div>
+<div style="margin-top:4px;background:#f0fdf4;border:1px solid rgba(22,163,74,0.2);border-radius:8px;padding:11px 16px;font-size:12px;">
+<strong style="color:#16a34a">✅ Dato positivo:</strong> El 85% de los widgets incluyen imagen, y la marca Civitatis (#EA0558) es el color de botón más elegido — buena coherencia visual con la marca.</div>
 </div>
 
-<!-- ══════ LANG ══════ -->
-<div id="tab-lang" class="tab-content">
-  <div class="kpi-strip" style="grid-template-columns:repeat(5,1fr)">
-    <div class="kpi-card"><div class="kpi-dot">Español</div><div class="kpi-value">271</div><div class="kpi-sub">61,7% del total</div><div class="kpi-badge">🇪🇸 líder</div></div>
-    <div class="kpi-card blue"><div class="kpi-dot">Italiano</div><div class="kpi-value">138</div><div class="kpi-sub">31,4% del total</div><div class="kpi-badge">🇮🇹 2.º</div></div>
-    <div class="kpi-card green"><div class="kpi-dot">Portugués</div><div class="kpi-value">19</div><div class="kpi-sub">4,3% del total</div><div class="kpi-badge">🇧🇷 3.º</div></div>
-    <div class="kpi-card orange"><div class="kpi-dot">Inglés</div><div class="kpi-value">7</div><div class="kpi-sub">1,6% del total</div><div class="kpi-badge">🇬🇧 4.º</div></div>
-    <div class="kpi-card purple"><div class="kpi-dot">Francés</div><div class="kpi-value">4</div><div class="kpi-sub">0,9% del total</div><div class="kpi-badge">🇫🇷 5.º</div></div>
-  </div>
-  <div class="chart-row two">
-    <div class="chart-card">
-      <h3>Distribución porcentual</h3>
-      <div class="chart-sub">% sobre 439 widgets totales</div>
-      <div class="chart-wrap"><canvas id="c-lang-pie"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Volumen absoluto</h3>
-      <div class="chart-sub">Número total de widgets por idioma</div>
-      <div class="chart-wrap"><canvas id="c-lang-bar"></canvas></div>
-    </div>
-  </div>
-  <div class="table-card">
-    <h3>Detalle por idioma</h3>
-    <div class="chart-sub">Ranking completo</div>
-    <table>
-      <thead><tr><th>#</th><th>Idioma</th><th>Widgets</th><th>% Total</th><th>Afiliados únicos</th><th>Distribución widgets</th></tr></thead>
-      <tbody>
-        <tr><td class="rank">1</td><td><span class="pill pill-es">ES</span> Español</td><td><strong>271</strong></td><td>61,7%</td><td><span style="font-weight:700;color:#ea0558">24</span></td><td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td></tr>
-        <tr><td class="rank">2</td><td><span class="pill pill-it">IT</span> Italiano</td><td><strong>138</strong></td><td>31,4%</td><td><span style="font-weight:700;color:#1a73e8">6</span></td><td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:51%;background:#1a73e8"></div></div></div></td></tr>
-        <tr><td class="rank">3</td><td><span class="pill pill-pt">PT</span> Portugués</td><td><strong>19</strong></td><td>4,3%</td><td><span style="font-weight:700;color:#16a34a">3</span></td><td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:7%;background:#16a34a"></div></div></div></td></tr>
-        <tr><td class="rank">4</td><td><span class="pill pill-en">EN</span> Inglés</td><td><strong>7</strong></td><td>1,6%</td><td><span style="font-weight:700;color:#d97706">3</span></td><td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:2.6%;background:#d97706"></div></div></div></td></tr>
-        <tr><td class="rank">5</td><td><span class="pill pill-fr">FR</span> Francés</td><td><strong>4</strong></td><td>0,9%</td><td><span style="font-weight:700;color:#7c3aed">3</span></td><td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:#7c3aed"></div></div></div></td></tr>
-      </tbody>
-    </table>
-  </div>
+<div style="text-align:center;padding:18px;font-size:11px;color:#9ca3af;border-top:1px solid #ebebeb;">Civitatis · Reporte de adopción Widget Traslados · Generado 2026-05-30</div>
 </div>
-
-<!-- ══════ AFILIADOS ══════ -->
-<div id="tab-affiliates" class="tab-content">
-  <div class="kpi-strip" style="grid-template-columns:repeat(5,1fr)">
-    <div class="kpi-card"><div class="kpi-dot">Afiliados activos</div><div class="kpi-value">29</div><div class="kpi-sub">han creado ≥1 widget</div><div class="kpi-badge">base activada</div></div>
-    <div class="kpi-card blue"><div class="kpi-dot">Top afiliado</div><div class="kpi-value">5344</div><div class="kpi-sub">182 widgets</div><div class="kpi-badge">41,5% del total</div></div>
-    <div class="kpi-card orange"><div class="kpi-dot">Top 2 concentración</div><div class="kpi-value">68%</div><div class="kpi-sub">297 de 439 widgets</div><div class="kpi-badge">aff 5344 + 101163</div></div>
-    <div class="kpi-card green"><div class="kpi-dot">Destinos únicos</div><div class="kpi-value">325</div><div class="kpi-sub">activity_id distintos</div><div class="kpi-badge">en 439 widgets</div></div>
-    <div class="kpi-card purple"><div class="kpi-dot">1 solo widget</div><div class="kpi-value">17</div><div class="kpi-sub">afiliados (58,6%)</div><div class="kpi-badge">potencial activación</div></div>
-  </div>
-
-  <div class="chart-row two">
-    <div class="chart-card">
-      <h3>Top 10 afiliados — Widgets creados</h3>
-      <div class="chart-sub">Número de widgets por afiliado</div>
-      <div class="chart-wrap"><canvas id="c-aff-bar"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Top 10 afiliados — Destinos únicos</h3>
-      <div class="chart-sub">Número de activity_id distintos por afiliado</div>
-      <div class="chart-wrap"><canvas id="c-dest-bar"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-row two">
-    <div class="chart-card">
-      <h3>Concentración de widgets</h3>
-      <div class="chart-sub">Distribución por volumetría de uso</div>
-      <div class="chart-wrap"><canvas id="c-aff-pie"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Concentración de destinos</h3>
-      <div class="chart-sub">Destinos únicos por grupo de afiliados</div>
-      <div class="chart-wrap"><canvas id="c-dest-pie"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-row two">
-    <div class="table-card" style="margin-bottom:0">
-      <h3>Ranking — Widgets creados</h3>
-      <div class="chart-sub">Todos los afiliados con ≥1 widget</div>
-      <table>
-        <thead><tr><th>#</th><th>Afiliado</th><th>Widgets</th><th>%</th><th>Distribución</th></tr></thead>
-        <tbody id="aff-widgets-tbody"></tbody>
-      </table>
-    </div>
-    <div class="table-card" style="margin-bottom:0">
-      <h3>Ranking — Destinos únicos</h3>
-      <div class="chart-sub">Destinos distintos configurados por afiliado</div>
-      <table>
-        <thead><tr><th>#</th><th>Afiliado</th><th>Destinos</th><th>%</th><th>Distribución</th></tr></thead>
-        <tbody id="aff-dest-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ UX ══════ -->
-<div id="tab-ux" class="tab-content">
-
-  <div class="note-box green">
-    <strong>✅ Imagen:</strong> El <strong>100%</strong> de los widgets (439/439) tienen una imagen configurada (campo <code>image_path</code> relleno). No hay widgets sin imagen.
-  </div>
-
-  <div class="chart-row three">
-    <!-- WIDGET SIZE -->
-    <div class="chart-card">
-      <h3>Tamaño del widget</h3>
-      <div class="chart-sub">Distribución de <code>widget_size</code></div>
-      <div class="chart-wrap"><canvas id="c-size"></canvas></div>
-    </div>
-    <!-- FONT -->
-    <div class="chart-card">
-      <h3>Fuente tipográfica</h3>
-      <div class="chart-sub">Montserrat vs otras fuentes (<code>font_style</code>)</div>
-      <div class="chart-wrap"><canvas id="c-font"></canvas></div>
-    </div>
-    <!-- RADIUS -->
-    <div class="chart-card">
-      <h3>Radio del botón</h3>
-      <div class="chart-sub">Redondeado (1) vs Cuadrado (0) — <code>button_radius</code></div>
-      <div class="chart-wrap"><canvas id="c-radius"></canvas></div>
-    </div>
-  </div>
-
-  <!-- BUTTON COLOR -->
-  <div class="chart-row one">
-    <div class="chart-card">
-      <h3>Color del botón</h3>
-      <div class="chart-sub">Distribución de colores HEX usados en <code>button_color</code></div>
-      <div class="chart-wrap tall"><canvas id="c-color-pie"></canvas></div>
-    </div>
-  </div>
-
-  <!-- UX SUMMARY -->
-  <div class="table-card">
-    <h3>Resumen de preferencias UX</h3>
-    <div class="chart-sub">Opciones más usadas por cada parámetro de configuración</div>
-    <div style="padding: 4px 0;">
-      <div class="ux-stat">
-        <div class="ux-stat-label"><span style="font-size:18px">🖼️</span> Imagen configurada</div>
-        <div class="ux-stat-bar"><div class="ux-stat-bar-fill" style="width:100%;background:#16a34a"></div></div>
-        <div class="ux-stat-pct" style="color:#16a34a">100%</div>
-      </div>
-      <div class="ux-stat">
-        <div class="ux-stat-label"><span style="font-size:18px">📐</span> Tamaño 3:2 (paisaje)</div>
-        <div class="ux-stat-bar"><div class="ux-stat-bar-fill" style="width:52.2%;background:#ea0558"></div></div>
-        <div class="ux-stat-pct" style="color:#ea0558">52,2%</div>
-      </div>
-      <div class="ux-stat">
-        <div class="ux-stat-label"><span style="font-size:18px">🔤</span> Fuente Montserrat</div>
-        <div class="ux-stat-bar"><div class="ux-stat-bar-fill" style="width:94.5%;background:#1a73e8"></div></div>
-        <div class="ux-stat-pct" style="color:#1a73e8">94,5%</div>
-      </div>
-      <div class="ux-stat">
-        <div class="ux-stat-label"><span style="font-size:18px">🎨</span> Color #ea0558 (Civitatis)</div>
-        <div class="ux-stat-bar"><div class="ux-stat-bar-fill" style="width:40.5%;background:#ea0558"></div></div>
-        <div class="ux-stat-pct" style="color:#ea0558">40,5%</div>
-      </div>
-      <div class="ux-stat">
-        <div class="ux-stat-label"><span style="font-size:18px">🔘</span> Botón redondeado (radius=1)</div>
-        <div class="ux-stat-bar"><div class="ux-stat-bar-fill" style="width:92.3%;background:#7c3aed"></div></div>
-        <div class="ux-stat-pct" style="color:#7c3aed">92,3%</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DRILLDOWN MODAL -->
-<div class="modal-overlay" id="drill-overlay" onclick="if(event.target===this)hideDrill()">
-  <div class="modal-card">
-    <div class="modal-header">
-      <div>
-        <h2 id="drill-title"></h2>
-        <div class="modal-meta" id="drill-meta"></div>
-      </div>
-      <button class="modal-close" onclick="hideDrill()">×</button>
-    </div>
-    <div class="modal-body">
-      <table class="modal-table">
-        <thead><tr><th>#</th><th>Afiliado</th><th>Widgets</th><th>% segmento</th><th>Distribución</th></tr></thead>
-        <tbody id="drill-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
 <script>
-// ── DATA ────────────────────────────────────────────────
-const LANG  = [["es",271],["it",138],["pt",19],["en",7],["fr",4]];
-const WEEKS = [
-  {l:"W0 (23 abr)",v:3},{l:"W1 (24–30 abr)",v:38},{l:"W2 (1–7 may)",v:149},
-  {l:"W3 (8–14 may)",v:181},{l:"W4 (15–20 may)",v:68}
-];
-const DAILY = [
-  ["23 abr",3],["24 abr",3],["27 abr",7],["28 abr",15],["29 abr",4],["30 abr",9],
-  ["01 may",12],["02 may",28],["03 may",56],["04 may",30],["05 may",5],["06 may",14],["07 may",4],
-  ["08 may",15],["09 may",12],["10 may",11],["11 may",10],["12 may",103],["13 may",4],["14 may",26],
-  ["15 may",9],["16 may",22],["17 may",14],["18 may",2],["19 may",12],["20 may",9]
-];
-const AFFS = [
-  ["5344",182],["101163",115],["108269",39],["12701",32],["99960",14],
-  ["108252",11],["104765",8],["1051",5],["100866",5],["1050",4],
-  ["112645",3],["2089",2],["106544",2],["112925",2],
-  ["1001",1],["4990",1],["10727",1],["12128",1],["99721",1],
-  ["100750",1],["101913",1],["104142",1],["104474",1],["107208",1],
-  ["107513",1],["107934",1],["109076",1],["112867",1],["113140",1]
-];
-const DESTS = [
-  ["5344",162],["101163",62],["12701",26],["108269",25],["108252",9],
-  ["104765",7],["99960",5],["100866",5],["1050",4],["1051",3],
-  ["112645",3],["2089",2],["112925",2],
-  ["1001",1],["4990",1],["10727",1],["12128",1],["99721",1],
-  ["100750",1],["101913",1],["104142",1],["104474",1],["106544",1],
-  ["107208",1],["107513",1],["107934",1],["109076",1],["112867",1],["113140",1]
-];
-const SIZES  = [["3:2",229],["2:3",185],["1:1",25]];
+function show(i,el){document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',j===i));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+const PINK='#ea0558',PINKS='rgba(234,5,88,0.25)',GREEN='#16a34a',BLUE='#1a73e8';
+Chart.defaults.font.family='Montserrat';Chart.defaults.font.size=11;
+const PAL=['#ea0558','#1a73e8','#16a34a','#d97706','#7c3aed','#0891b2'];
+const pctLabels={id:'pctLabels',afterDatasetsDraw(c){const{ctx}=c;const ds=c.data.datasets[0];const tot=ds.data.reduce((a,b)=>a+b,0);if(!tot)return;ctx.save();ctx.font='700 11px Montserrat';ctx.textAlign='center';ctx.textBaseline='middle';c.getDatasetMeta(0).data.forEach((arc,i)=>{const p=ds.data[i]/tot*100;if(p<5)return;const pos=arc.tooltipPosition();ctx.fillStyle='#fff';ctx.shadowColor='rgba(0,0,0,0.4)';ctx.shadowBlur=3;ctx.fillText(p.toFixed(1)+'%',pos.x,pos.y);});ctx.restore();}};
+const EVO_LABELS=["03-12", "03-17", "03-18", "03-19", "03-20", "03-21", "03-22", "03-23", "03-24", "03-25", "03-26", "03-27", "03-28", "03-29", "03-30", "04-01", "04-02", "04-03", "04-04", "04-09", "04-10", "04-11", "04-13", "04-14", "04-15", "04-16", "04-17", "04-18", "04-19", "04-20", "04-22", "04-23", "04-24", "04-26", "04-27", "04-28", "04-29", "05-06", "05-07", "05-09", "05-12", "05-17", "05-18", "05-19", "05-20"];
+const EVO_FULL=["2026-03-12", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-09", "2026-04-10", "2026-04-11", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19", "2026-04-20", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29", "2026-05-06", "2026-05-07", "2026-05-09", "2026-05-12", "2026-05-17", "2026-05-18", "2026-05-19", "2026-05-20"];
+const EVO_VALS=[3, 3, 4, 12, 31, 2, 3, 5, 8, 8, 1, 12, 3, 2, 5, 10, 3, 1, 1, 2, 1, 2, 1, 3, 3, 1, 5, 8, 2, 1, 3, 4, 2, 1, 3, 2, 1, 8, 1, 2, 10, 2, 3, 1, 2];
+const EVO_CUM=[3, 6, 10, 22, 53, 55, 58, 63, 71, 79, 80, 92, 95, 97, 102, 112, 115, 116, 117, 119, 120, 122, 123, 126, 129, 130, 135, 143, 145, 146, 149, 153, 155, 156, 159, 161, 162, 170, 171, 173, 183, 185, 188, 189, 191];
+const EVO_DETAIL={"2026-03-12": [["599", 1], ["1051", 1], ["100866", 1]], "2026-03-17": [["112466", 1], ["111646", 1], ["101746", 1]], "2026-03-18": [["8987", 2], ["1892", 1], ["112501", 1]], "2026-03-19": [["110110", 4], ["1051", 4], ["100866", 2], ["2365", 1], ["2033", 1]], "2026-03-20": [["1050", 21], ["8089", 5], ["5839", 3], ["5206", 1], ["99960", 1]], "2026-03-21": [["1050", 2]], "2026-03-22": [["111689", 1], ["8780", 1], ["12701", 1]], "2026-03-23": [["6310", 4], ["1050", 1]], "2026-03-24": [["1051", 6], ["100919", 1], ["7222", 1]], "2026-03-25": [["104224", 4], ["13153", 2], ["12698", 1], ["101464", 1]], "2026-03-26": [["12701", 1]], "2026-03-27": [["10537", 7], ["10727", 2], ["100019", 2], ["108623", 1]], "2026-03-28": [["108623", 1], ["3055", 1], ["110403", 1]], "2026-03-29": [["110835", 1], ["110110", 1]], "2026-03-30": [["105954", 3], ["100019", 1], ["10537", 1]], "2026-04-01": [["4059", 6], ["12663", 1], ["110098", 1], ["11201", 1], ["5839", 1]], "2026-04-02": [["110110", 2], ["110835", 1]], "2026-04-03": [["110110", 1]], "2026-04-04": [["111646", 1]], "2026-04-09": [["105971", 2]], "2026-04-10": [["107801", 1]], "2026-04-11": [["112535", 2]], "2026-04-13": [["99823", 1]], "2026-04-14": [["100866", 2], ["11080", 1]], "2026-04-15": [["3676", 1], ["12698", 1], ["3493", 1]], "2026-04-16": [["112892", 1]], "2026-04-17": [["8330", 1], ["2195", 1], ["1051", 1], ["3682", 1], ["107801", 1]], "2026-04-18": [["8636", 7], ["11893", 1]], "2026-04-19": [["110835", 1], ["108623", 1]], "2026-04-20": [["111646", 1]], "2026-04-22": [["12304", 3]], "2026-04-23": [["107801", 1], ["112921", 1], ["109868", 1], ["110110", 1]], "2026-04-24": [["6886", 1], ["112691", 1]], "2026-04-26": [["2155", 1]], "2026-04-27": [["4023", 3]], "2026-04-28": [["104224", 1], ["107848", 1]], "2026-04-29": [["100866", 1]], "2026-05-06": [["1051", 6], ["113152", 2]], "2026-05-07": [["105971", 1]], "2026-05-09": [["3929", 1], ["2089", 1]], "2026-05-12": [["101163", 10]], "2026-05-17": [["1047", 1], ["102281", 1]], "2026-05-18": [["101151", 2], ["1892", 1]], "2026-05-19": [["104224", 1]], "2026-05-20": [["104224", 1], ["105658", 1]]};
+const evoChart=new Chart(document.getElementById('evoChart'),{data:{labels:EVO_LABELS,datasets:[
+{type:'line',label:'Widgets/dia',data:EVO_VALS,borderColor:PINK,backgroundColor:'rgba(234,5,88,0.08)',borderWidth:2,fill:true,tension:0.3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:PINK,pointBorderColor:'#fff',pointBorderWidth:1.5,yAxisID:'y'},
+{type:'line',label:'Media diaria (4.24)',data:Array(EVO_VALS.length).fill(4.24),borderColor:'#9ca3af',borderDash:[5,5],borderWidth:1.5,pointRadius:0,yAxisID:'y'},
+{type:'line',label:'Progresion acumulada',data:EVO_CUM,borderColor:BLUE,borderWidth:2,pointRadius:0,tension:0.3,yAxisID:'y1'}
+]},options:{maintainAspectRatio:false,interaction:{mode:'nearest',intersect:true},
+onClick:(e,els)=>{if(els.length)showDay(els[0].index);},
+plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}},
+tooltip:{callbacks:{title:(it)=>EVO_FULL[it[0].dataIndex],afterBody:(it)=>{const det=EVO_DETAIL[EVO_FULL[it[0].dataIndex]]||[];return det.length?'Clic para ver '+det.length+' afiliado(s)':'';}}}},
+scales:{y:{beginAtZero:true,position:'left',title:{display:true,text:'Widgets/dia'}},y1:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Acumulado'}},x:{ticks:{maxRotation:90,minRotation:45,font:{size:8},autoSkip:false}}}}});
+function showDay(i){const date=EVO_FULL[i];const det=EVO_DETAIL[date]||[];const total=EVO_VALS[i];
+const lbl=new Date(date+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+let rows=det.map((a,k)=>'<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 10px;color:#ea0558;font-weight:700;">'+(k+1)+'</td><td style="padding:6px 10px;font-weight:600;">'+afName(a[0])+'</td><td style="padding:6px 10px;color:#9ca3af;font-size:11.5px;">'+a[0]+'</td><td style="padding:6px 10px;text-align:right;font-weight:700;">'+a[1]+'</td></tr>').join('');
+document.getElementById('dayDetail').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;color:#1a1a2e;">&#128197; '+lbl+'</div><div style="background:#fff0f3;color:#ea0558;font-weight:700;font-size:11px;padding:3px 10px;border-radius:20px;">'+total+' widgets &middot; '+det.length+' afiliado(s)</div></div><table style="width:100%;border-collapse:collapse;font-size:12.5px;"><thead><tr style="background:#fafafa;"><th style="padding:6px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">#</th><th style="padding:6px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">Afiliado</th><th style="padding:6px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">ID</th><th style="padding:6px 10px;text-align:right;font-size:10px;text-transform:uppercase;color:#6b7280;">Widgets</th></tr></thead><tbody>'+rows+'</tbody></table>';}
+new Chart(langDoughnut,{type:'doughnut',data:{labels:["Espa\u00f1ol", "Italiano", "Portugu\u00e9s", "Ingl\u00e9s"],datasets:[{data:[122, 49, 18, 2],backgroundColor:PAL}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'right'}}}});
+new Chart(langPie,{type:'pie',data:{labels:["Espa\u00f1ol", "Italiano", "Portugu\u00e9s", "Ingl\u00e9s"],datasets:[{data:[122, 49, 18, 2],backgroundColor:PAL}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'right'}}}});
+new Chart(langAffBar,{type:'bar',data:{labels:["Espa\u00f1ol", "Italiano", "Portugu\u00e9s", "Ingl\u00e9s"],datasets:[{data:[50, 19, 4, 2],backgroundColor:GREEN,borderRadius:5}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+new Chart(affBar,{type:'bar',data:{labels:["1050", "1051", "101163", "110110", "10537", "104224", "8636", "4059", "100866", "8089"],datasets:[{data:[24, 18, 10, 9, 8, 7, 7, 6, 6, 5],backgroundColor:PINK,borderRadius:4}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:(it)=>afName(it[0].label)+' ('+it[0].label+')'}}}}});
+new Chart(affDestBar,{type:'bar',data:{labels:["1050", "1051", "10537", "4059", "8636", "101163", "8089", "104224", "100866", "6310"],datasets:[{data:[19, 7, 7, 6, 6, 5, 5, 5, 4, 3],backgroundColor:GREEN,borderRadius:4}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:(it)=>afName(it[0].label)+' ('+it[0].label+')'}}}}});
+new Chart(sizeChart,{type:'doughnut',data:{labels:["2:3", "3:2", "1:1"],datasets:[{data:[106, 44, 41],backgroundColor:PAL}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}},plugins:[pctLabels]});
+new Chart(fontChart,{type:'doughnut',data:{labels:["montserrat", "opensans", "poppins", "raleway", "roboto", "inter"],datasets:[{data:[179, 5, 3, 2, 1, 1],backgroundColor:PAL}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}},plugins:[pctLabels]});
+new Chart(colorChart,{type:'pie',data:{labels:["#EA0558", "#FF7B00", "#528A82", "#001981", "#DB4403", "#F4AE3F", "#F98501", "#FF8800", "Otros"],datasets:[{data:[140, 20, 3, 3, 2, 2, 2, 2, 17],backgroundColor:["#EA0558", "#FF7B00", "#528A82", "#001981", "#DB4403", "#F4AE3F", "#F98501", "#FF8800", "#cccccc"]}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9}}}}},plugins:[pctLabels]});
+new Chart(radiusChart,{type:'doughnut',data:{labels:['Redondeado','Cuadrado'],datasets:[{data:[183,8],backgroundColor:[PINK,'#cbd5e1']}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}},plugins:[pctLabels]});
 
-// ── DRILLDOWN DATA ───────────────────────────────────────
-const DRILLDOWN = {
-  lang: {
-    es:[["5344",182],["108269",37],["101163",10],["99960",7],["1050",4],["1051",4],["100866",4],["12701",3],["112645",3],["2089",2],["106544",2],["1001",1],["4990",1],["12128",1],["100750",1],["104142",1],["107208",1],["107513",1],["107934",1],["108252",1],["109076",1],["112867",1],["112925",1],["113140",1]],
-    it:[["101163",105],["12701",29],["10727",1],["99960",1],["100866",1],["112925",1]],
-    en:[["99960",4],["108269",2],["1051",1]],
-    pt:[["108252",10],["104765",8],["104474",1]],
-    fr:[["99960",2],["99721",1],["101913",1]]
-  },
-  week: {
-    "W0 (23 abr)":[["100866",2],["109076",1]],
-    "W1 (24–30 abr)":[["108269",16],["5344",8],["1050",4],["100866",3],["112925",2],["1001",1],["1051",1],["4990",1],["104142",1],["104474",1]],
-    "W2 (1–7 may)":[["5344",113],["12701",26],["1051",4],["108269",4],["100750",1],["107934",1]],
-    "W3 (8–14 may)":[["101163",98],["5344",36],["108269",19],["108252",10],["12701",6],["99960",4],["2089",2],["10727",1],["99721",1],["107208",1],["107513",1],["112867",1],["113140",1]],
-    "W4 (15–20 may)":[["5344",25],["101163",17],["99960",10],["104765",8],["112645",3],["106544",2],["12128",1],["101913",1],["108252",1]]
-  },
-  date: {
-    "23 abr":[["100866",2],["109076",1]],
-    "24 abr":[["100866",3]],
-    "27 abr":[["1050",4],["112925",2],["1001",1]],
-    "28 abr":[["108269",13],["4990",1],["104142",1]],
-    "29 abr":[["108269",2],["1051",1],["104474",1]],
-    "30 abr":[["5344",8],["108269",1]],
-    "01 may":[["5344",12]],
-    "02 may":[["5344",28]],
-    "03 may":[["5344",34],["12701",20],["108269",2]],
-    "04 may":[["5344",28],["12701",1],["108269",1]],
-    "05 may":[["5344",2],["12701",2],["107934",1]],
-    "06 may":[["5344",7],["1051",4],["12701",3]],
-    "07 may":[["5344",2],["100750",1],["108269",1]],
-    "08 may":[["108269",9],["5344",4],["12701",1],["113140",1]],
-    "09 may":[["5344",7],["108252",5]],
-    "10 may":[["5344",5],["2089",2],["12701",2],["108252",2]],
-    "11 may":[["5344",5],["12701",2],["108252",2],["107208",1]],
-    "12 may":[["101163",98],["5344",1],["10727",1],["99721",1],["108252",1],["112867",1]],
-    "13 may":[["5344",4]],
-    "14 may":[["5344",10],["108269",10],["99960",4],["12701",1],["107513",1]],
-    "15 may":[["5344",7],["101163",2]],
-    "16 may":[["99960",10],["101163",8],["112645",3],["101913",1]],
-    "17 may":[["101163",7],["5344",5],["106544",2]],
-    "18 may":[["5344",2]],
-    "19 may":[["104765",8],["5344",3],["12128",1]],
-    "20 may":[["5344",8],["108252",1]]
-  },
-  size: {
-    "3:2":[["5344",177],["12701",29],["104765",8],["1050",4],["1051",3],["99960",2],["112925",2],["100750",1],["106544",1],["107513",1],["107934",1]],
-    "2:3":[["101163",115],["108269",39],["5344",5],["100866",5],["12701",3],["112645",3],["1051",2],["108252",2],["1001",1],["2089",1],["10727",1],["12128",1],["99721",1],["104142",1],["106544",1],["107208",1],["109076",1],["112867",1],["113140",1]],
-    "1:1":[["99960",12],["108252",9],["2089",1],["4990",1],["101913",1],["104474",1]]
-  },
-  font: {
-    "Montserrat":[["5344",182],["101163",115],["108269",39],["99960",14],["12701",12],["108252",11],["104765",7],["1051",5],["100866",5],["1050",4],["112645",3],["106544",2],["1001",1],["2089",1],["4990",1],["10727",1],["12128",1],["99721",1],["100750",1],["101913",1],["104142",1],["104474",1],["107208",1],["107513",1],["107934",1],["109076",1],["112867",1],["113140",1]],
-    "OpenSans":[["12701",20],["2089",1]],
-    "Inter":[["112925",2]],
-    "Roboto":[["104765",1]]
-  },
-  radius: {
-    "Redondeado (1)":[["5344",182],["101163",115],["108269",39],["12701",13],["99960",10],["108252",9],["1051",5],["100866",5],["1050",4],["112645",3],["2089",2],["106544",2],["112925",2],["1001",1],["4990",1],["10727",1],["12128",1],["99721",1],["100750",1],["101913",1],["104474",1],["107208",1],["107513",1],["107934",1],["109076",1],["112867",1],["113140",1]],
-    "Cuadrado (0)":[["12701",19],["104765",8],["99960",4],["108252",2],["104142",1]]
-  },
-  color: {
-    "#ea0558":[["101163",115],["108269",20],["104765",8],["1051",5],["100866",5],["5344",3],["12701",3],["112645",3],["1001",1],["2089",1],["4990",1],["10727",1],["12128",1],["99721",1],["99960",1],["104142",1],["104474",1],["107208",1],["107513",1],["107934",1],["108252",1],["109076",1],["112867",1],["113140",1]],
-    "#397cef":[["5344",134]],
-    "#0587eb":[["5344",28]],
-    "#eb9705":[["12701",17],["108252",5]],
-    "#006599":[["99960",12]],
-    "#05b1eb":[["5344",12]],
-    "#eba205":[["12701",10]],
-    "#faac3d":[["108269",8]],
-    "Otros":null
-  }
+const LANG_AFF={"Italiano": [["101163", 10], ["8089", 5], ["6310", 4], ["12304", 3], ["108623", 3], ["110835", 3], ["1050", 3], ["5839", 3], ["1051", 2], ["12701", 2], ["107801", 2], ["100019", 2], ["111689", 1], ["11080", 1], ["8330", 1], ["12663", 1], ["2195", 1], ["100919", 1], ["112535", 1]], "Español": [["1050", 21], ["1051", 15], ["10537", 8], ["8636", 7], ["4059", 6], ["100866", 6], ["4023", 3], ["105954", 3], ["105971", 3], ["111646", 3], ["12698", 2], ["113152", 2], ["1892", 2], ["10727", 2], ["13153", 2], ["8987", 2], ["101151", 2], ["112466", 1], ["112892", 1], ["3929", 1], ["107801", 1], ["3676", 1], ["599", 1], ["100019", 1], ["11893", 1], ["3055", 1], ["110403", 1], ["112921", 1], ["109868", 1], ["101464", 1], ["112535", 1], ["1047", 1], ["5839", 1], ["102281", 1], ["110098", 1], ["6886", 1], ["112691", 1], ["8780", 1], ["2155", 1], ["3493", 1], ["11201", 1], ["2089", 1], ["3682", 1], ["2365", 1], ["2033", 1], ["5206", 1], ["101746", 1], ["7222", 1], ["99823", 1], ["99960", 1]], "Inglés": [["1051", 1], ["107848", 1]], "Portugués": [["110110", 9], ["104224", 7], ["112501", 1], ["105658", 1]]};
+const SIZE_AFF={"3:2": [["1051", 6], ["101163", 5], ["110110", 4], ["12304", 3], ["105971", 3], ["1892", 2], ["4023", 2], ["100019", 2], ["3929", 1], ["110835", 1], ["3055", 1], ["110403", 1], ["12663", 1], ["2195", 1], ["1047", 1], ["1050", 1], ["8780", 1], ["2155", 1], ["3493", 1], ["5839", 1], ["12701", 1], ["2365", 1], ["111646", 1], ["101151", 1], ["101746", 1]], "2:3": [["1051", 12], ["10537", 8], ["104224", 7], ["8636", 7], ["100866", 6], ["8089", 5], ["101163", 5], ["6310", 4], ["108623", 3], ["110110", 3], ["105954", 3], ["5839", 3], ["12698", 2], ["113152", 2], ["107801", 2], ["10727", 2], ["110835", 2], ["112535", 2], ["13153", 2], ["8987", 2], ["111689", 1], ["112466", 1], ["112892", 1], ["3676", 1], ["599", 1], ["100019", 1], ["11893", 1], ["112501", 1], ["109868", 1], ["8330", 1], ["101464", 1], ["4023", 1], ["102281", 1], ["110098", 1], ["101151", 1], ["6886", 1], ["112691", 1], ["100919", 1], ["11201", 1], ["3682", 1], ["2033", 1], ["7222", 1], ["99823", 1], ["99960", 1]], "1:1": [["1050", 23], ["4059", 6], ["111646", 2], ["110110", 2], ["12701", 1], ["112921", 1], ["11080", 1], ["107801", 1], ["107848", 1], ["2089", 1], ["105658", 1], ["5206", 1]]};
+const FONT_AFF={"montserrat": [["1050", 24], ["1051", 18], ["101163", 10], ["110110", 9], ["10537", 8], ["104224", 7], ["8636", 7], ["4059", 6], ["100866", 6], ["8089", 5], ["6310", 4], ["5839", 4], ["12304", 3], ["108623", 3], ["105954", 3], ["107801", 3], ["100019", 3], ["105971", 3], ["111646", 3], ["113152", 2], ["1892", 2], ["110835", 2], ["10727", 2], ["13153", 2], ["8987", 2], ["101151", 2], ["111689", 1], ["112466", 1], ["112892", 1], ["3929", 1], ["599", 1], ["11893", 1], ["3055", 1], ["112501", 1], ["110403", 1], ["112921", 1], ["11080", 1], ["8330", 1], ["12663", 1], ["12698", 1], ["4023", 1], ["112535", 1], ["1047", 1], ["102281", 1], ["110098", 1], ["107848", 1], ["6886", 1], ["112691", 1], ["8780", 1], ["2155", 1], ["3493", 1], ["100919", 1], ["11201", 1], ["3682", 1], ["105658", 1], ["2365", 1], ["2033", 1], ["5206", 1], ["101746", 1], ["7222", 1], ["99823", 1], ["99960", 1]], "poppins": [["4023", 2], ["12698", 1]], "raleway": [["3676", 1], ["2195", 1]], "opensans": [["12701", 2], ["110835", 1], ["2089", 1], ["112535", 1]], "roboto": [["109868", 1]], "inter": [["101464", 1]]};
+const RADIUS_AFF={"Redondeado": [["1050", 24], ["1051", 18], ["101163", 10], ["110110", 9], ["10537", 8], ["8636", 7], ["4059", 6], ["100866", 6], ["8089", 5], ["6310", 4], ["5839", 4], ["12304", 3], ["108623", 3], ["110835", 3], ["4023", 3], ["107801", 3], ["100019", 3], ["105971", 3], ["111646", 3], ["12698", 2], ["113152", 2], ["1892", 2], ["10727", 2], ["12701", 2], ["104224", 2], ["112535", 2], ["13153", 2], ["8987", 2], ["101151", 2], ["111689", 1], ["112466", 1], ["112892", 1], ["3929", 1], ["3676", 1], ["599", 1], ["11893", 1], ["3055", 1], ["112501", 1], ["110403", 1], ["112921", 1], ["11080", 1], ["109868", 1], ["8330", 1], ["12663", 1], ["101464", 1], ["2195", 1], ["1047", 1], ["102281", 1], ["110098", 1], ["107848", 1], ["6886", 1], ["112691", 1], ["8780", 1], ["2155", 1], ["3493", 1], ["100919", 1], ["11201", 1], ["2089", 1], ["3682", 1], ["105658", 1], ["2365", 1], ["2033", 1], ["5206", 1], ["101746", 1], ["7222", 1], ["99823", 1], ["99960", 1]], "Cuadrado": [["104224", 5], ["105954", 3]]};
+const COLOR_AFF={"#EA0558": [["1051", 18], ["101163", 10], ["110110", 9], ["10537", 8], ["104224", 7], ["8636", 7], ["100866", 6], ["8089", 5], ["6310", 4], ["5839", 4], ["12304", 3], ["108623", 3], ["107801", 3], ["100019", 3], ["4059", 3], ["12698", 2], ["1892", 2], ["10727", 2], ["112535", 2], ["13153", 2], ["8987", 2], ["111689", 1], ["112466", 1], ["112892", 1], ["113152", 1], ["3929", 1], ["3676", 1], ["599", 1], ["11893", 1], ["3055", 1], ["112501", 1], ["112921", 1], ["11080", 1], ["109868", 1], ["12663", 1], ["101464", 1], ["105971", 1], ["4023", 1], ["1047", 1], ["102281", 1], ["110098", 1], ["6886", 1], ["111646", 1], ["112691", 1], ["8780", 1], ["100919", 1], ["11201", 1], ["3682", 1], ["105658", 1], ["12701", 1], ["2033", 1], ["5206", 1], ["101151", 1], ["101746", 1], ["7222", 1], ["99823", 1]], "#FF7B00": [["1050", 20]], "#DB4403": [["110835", 2]], "#F4AE3F": [["4023", 2]], "#528A82": [["105954", 3]], "#F98501": [["1050", 2]], "#FF8800": [["1050", 2]], "#001981": [["4059", 3]], "Otros": [["105971", 2], ["111646", 2], ["12701", 1], ["110403", 1], ["8330", 1], ["2195", 1], ["113152", 1], ["110835", 1], ["107848", 1], ["101151", 1], ["2155", 1], ["3493", 1], ["2089", 1], ["2365", 1], ["99960", 1]]};
+const AFF_INFO={"101163": {"w": 10, "dest": 5, "langs": "IT (10)"}, "111689": {"w": 1, "dest": 1, "langs": "IT (1)"}, "112466": {"w": 1, "dest": 1, "langs": "ES (1)"}, "12698": {"w": 2, "dest": 1, "langs": "ES (2)"}, "1051": {"w": 18, "dest": 7, "langs": "ES (15), IT (2), EN (1)"}, "12304": {"w": 3, "dest": 2, "langs": "IT (3)"}, "112892": {"w": 1, "dest": 1, "langs": "ES (1)"}, "6310": {"w": 4, "dest": 3, "langs": "IT (4)"}, "113152": {"w": 2, "dest": 1, "langs": "ES (2)"}, "1892": {"w": 2, "dest": 2, "langs": "ES (2)"}, "1050": {"w": 24, "dest": 19, "langs": "ES (21), IT (3)"}, "3929": {"w": 1, "dest": 1, "langs": "ES (1)"}, "108623": {"w": 3, "dest": 3, "langs": "IT (3)"}, "110835": {"w": 3, "dest": 1, "langs": "IT (3)"}, "110110": {"w": 9, "dest": 3, "langs": "PT (9)"}, "4023": {"w": 3, "dest": 1, "langs": "ES (3)"}, "105954": {"w": 3, "dest": 3, "langs": "ES (3)"}, "107801": {"w": 3, "dest": 2, "langs": "IT (2), ES (1)"}, "3676": {"w": 1, "dest": 1, "langs": "ES (1)"}, "599": {"w": 1, "dest": 1, "langs": "ES (1)"}, "10727": {"w": 2, "dest": 2, "langs": "ES (2)"}, "100019": {"w": 3, "dest": 2, "langs": "IT (2), ES (1)"}, "11893": {"w": 1, "dest": 1, "langs": "ES (1)"}, "8089": {"w": 5, "dest": 5, "langs": "IT (5)"}, "12701": {"w": 2, "dest": 2, "langs": "IT (2)"}, "3055": {"w": 1, "dest": 1, "langs": "ES (1)"}, "112501": {"w": 1, "dest": 1, "langs": "PT (1)"}, "110403": {"w": 1, "dest": 1, "langs": "ES (1)"}, "112921": {"w": 1, "dest": 1, "langs": "ES (1)"}, "4059": {"w": 6, "dest": 6, "langs": "ES (6)"}, "5839": {"w": 4, "dest": 2, "langs": "IT (3), ES (1)"}, "11080": {"w": 1, "dest": 1, "langs": "IT (1)"}, "109868": {"w": 1, "dest": 1, "langs": "ES (1)"}, "8330": {"w": 1, "dest": 1, "langs": "IT (1)"}, "104224": {"w": 7, "dest": 5, "langs": "PT (7)"}, "12663": {"w": 1, "dest": 1, "langs": "IT (1)"}, "100866": {"w": 6, "dest": 4, "langs": "ES (6)"}, "10537": {"w": 8, "dest": 7, "langs": "ES (8)"}, "101464": {"w": 1, "dest": 1, "langs": "ES (1)"}, "105971": {"w": 3, "dest": 2, "langs": "ES (3)"}, "2195": {"w": 1, "dest": 1, "langs": "IT (1)"}, "8636": {"w": 7, "dest": 6, "langs": "ES (7)"}, "112535": {"w": 2, "dest": 1, "langs": "ES (1), IT (1)"}, "1047": {"w": 1, "dest": 1, "langs": "ES (1)"}, "13153": {"w": 2, "dest": 1, "langs": "ES (2)"}, "102281": {"w": 1, "dest": 1, "langs": "ES (1)"}, "110098": {"w": 1, "dest": 1, "langs": "ES (1)"}, "8987": {"w": 2, "dest": 1, "langs": "ES (2)"}, "107848": {"w": 1, "dest": 1, "langs": "EN (1)"}, "101151": {"w": 2, "dest": 2, "langs": "ES (2)"}, "6886": {"w": 1, "dest": 1, "langs": "ES (1)"}, "111646": {"w": 3, "dest": 3, "langs": "ES (3)"}, "112691": {"w": 1, "dest": 1, "langs": "ES (1)"}, "8780": {"w": 1, "dest": 1, "langs": "ES (1)"}, "2155": {"w": 1, "dest": 1, "langs": "ES (1)"}, "3493": {"w": 1, "dest": 1, "langs": "ES (1)"}, "100919": {"w": 1, "dest": 1, "langs": "IT (1)"}, "11201": {"w": 1, "dest": 1, "langs": "ES (1)"}, "2089": {"w": 1, "dest": 1, "langs": "ES (1)"}, "3682": {"w": 1, "dest": 1, "langs": "ES (1)"}, "105658": {"w": 1, "dest": 1, "langs": "PT (1)"}, "2365": {"w": 1, "dest": 1, "langs": "ES (1)"}, "2033": {"w": 1, "dest": 1, "langs": "ES (1)"}, "5206": {"w": 1, "dest": 1, "langs": "ES (1)"}, "101746": {"w": 1, "dest": 1, "langs": "ES (1)"}, "7222": {"w": 1, "dest": 1, "langs": "ES (1)"}, "99823": {"w": 1, "dest": 1, "langs": "ES (1)"}, "99960": {"w": 1, "dest": 1, "langs": "ES (1)"}};
+
+const AFF_NAMES={"1047": "molaviajar", "1050": "surfingtheplanet", "1051": "Viajeros Callejeros", "1892": "mochilerostv", "2033": "meraviglia", "2089": "readandtrip viajesendirecto", "2155": "tramandoviajes", "2195": "visitarebarcellona", "2365": "avecesveoviajes", "3055": "ser-viajera", "3493": "magiaenelcamino", "3676": "sitioshistoricos", "3682": "viajerascallejerascom", "3929": "elmundoesunviaje", "4023": "Trasladosaeropuertolondres.com", "4059": "indiautentica", "5206": "vivesantorini", "5839": "viaggiaregratis", "6310": "miprendoemiportovia", "6886": "ilvagamondo.it", "7222": "viajemosconadriana", "8089": "inviaggiodasola.com", "8330": "viaggichemangi.com", "8636": "lasardegna.es lasicilia.es lacroacia.es", "8780": "vanessatravels", "8987": "la-provenza / turismoazores", "10537": "viajaleaks", "10727": "souvenirdiviaggio", "11080": "viaggiamohg", "11201": "freetouratenea", "11893": "viaggioin", "12304": "inviaggioconselena", "12663": "viaggiacorrisogna", "12698": "buenosairesrandom", "12701": "ilmiraggio", "13153": "descubriendobuenosaires", "99823": "pequenosygrandesviajeros", "99960": "viajamenorca", "100019": "travel365", "100866": "gemelosviajeros", "100919": "piccoligrandiviaggiatori", "101151": "puertoescondidoairport", "101163": "italia-polonia", "101464": "vuelosbaratos18", "101746": "sirchandler", "102281": "seunatlascomunidad", "104224": "brasilnaitalia", "105658": "rotadosviajantes - ABBV", "105954": "Vvandeados", "105971": "toursgratis", "107801": "viaggifacile", "107848": "Diariodeibiza", "108623": "margheritaventura", "109868": "Gerley travels", "110098": "guiaturista", "110110": "vamospranovayork", "110403": "volontetravel", "110835": "newyorkfacile", "111646": "almadeaventurasmagicas", "111689": "atravelinmymind", "112466": "Jour guide", "112501": "flydreams", "112535": "termeweekend", "112691": "caminhandopelodestino", "112892": "Luxury World wide", "112921": "Dream Gateways", "113152": "Pomelo Capital"};
+function afName(id){return AFF_NAMES[id]||'(sin nombre)';}
+
+// ---- Modal de afiliados (clic en cualquier grafica) ----
+(function(){
+var ov=document.createElement('div');
+ov.id='affModal';
+ov.style.cssText='display:none;position:fixed;inset:0;background:rgba(26,26,46,0.45);z-index:999;align-items:center;justify-content:center;padding:20px;';
+ov.innerHTML='<div style="background:#fff;border-radius:12px;max-width:460px;width:100%;max-height:80vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,0.25);"><div id="affModalBody" style="padding:22px 24px;"></div></div>';
+ov.addEventListener('click',function(e){if(e.target===ov)ov.style.display='none';});
+document.body.appendChild(ov);
+window.showAff=function(title,sub,rows){
+  var total=rows.reduce(function(a,r){return a+r[1];},0);
+  var body='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px;"><div style="font-size:15px;font-weight:700;color:#1a1a2e;">'+title+'</div><div onclick="document.getElementById(\'affModal\').style.display=\'none\'" style="cursor:pointer;color:#9ca3af;font-size:20px;line-height:1;">&times;</div></div>';
+  body+='<div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;">'+sub+'</div>';
+  body+='<div style="display:inline-block;background:#fff0f3;color:#ea0558;font-weight:700;font-size:11px;padding:3px 10px;border-radius:20px;margin-bottom:12px;">'+total+' widgets &middot; '+rows.length+' afiliado(s)</div>';
+  body+='<table style="width:100%;border-collapse:collapse;font-size:12.5px;"><thead><tr style="background:#fafafa;"><th style="padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">#</th><th style="padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">Afiliado</th><th style="padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;">ID</th><th style="padding:7px 10px;text-align:right;font-size:10px;text-transform:uppercase;color:#6b7280;">Widgets</th></tr></thead><tbody>';
+  rows.forEach(function(r,i){body+='<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 10px;color:#ea0558;font-weight:700;">'+(i+1)+'</td><td style="padding:6px 10px;font-weight:600;">'+afName(r[0])+'</td><td style="padding:6px 10px;color:#9ca3af;font-size:11.5px;">'+r[0]+'</td><td style="padding:6px 10px;text-align:right;font-weight:700;">'+r[1]+'</td></tr>';});
+  body+='</tbody></table>';
+  document.getElementById('affModalBody').innerHTML=body;
+  ov.style.display='flex';
 };
+window.showAffInfo=function(affId){
+  var info=AFF_INFO[affId];if(!info)return;
+  var body='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;"><div><div style="font-size:15px;font-weight:700;color:#1a1a2e;">'+afName(affId)+'</div><div style="font-size:11.5px;color:#9ca3af;">ID '+affId+'</div></div><div onclick="document.getElementById(\'affModal\').style.display=\'none\'" style="cursor:pointer;color:#9ca3af;font-size:20px;line-height:1;">&times;</div></div>';
+  body+='<div style="display:flex;gap:10px;margin-bottom:14px;">';
+  body+='<div style="flex:1;background:#fff0f3;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:26px;font-weight:700;color:#ea0558;">'+info.w+'</div><div style="font-size:10.5px;color:#6b7280;">widgets creados</div></div>';
+  body+='<div style="flex:1;background:#f0fdf4;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:26px;font-weight:700;color:#16a34a;">'+info.dest+'</div><div style="font-size:10.5px;color:#6b7280;">destinos distintos</div></div>';
+  body+='</div>';
+  body+='<div style="font-size:11px;text-transform:uppercase;color:#6b7280;font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">Idiomas</div><div style="font-size:13px;color:#374151;font-weight:600;">'+info.langs+'</div>';
+  document.getElementById('affModalBody').innerHTML=body;
+  ov.style.display='flex';
+};
+function clickAt(chart,evt){var pts=chart.getElementsAtEventForMode(evt,'nearest',{intersect:true},true);return pts.length?pts[0].index:-1;}
+function wireCat(id,map,prefix){var ch=Chart.getChart(id);if(!ch)return;ch.options.onClick=function(e){var i=clickAt(ch,e);if(i<0)return;var lbl=ch.data.labels[i];var rows=map[lbl]||[];if(rows.length)showAff(prefix+': '+lbl,'Afiliados que crearon widgets con este valor',rows);};}
+function wireAff(id){var ch=Chart.getChart(id);if(!ch)return;ch.options.onClick=function(e){var i=clickAt(ch,e);if(i<0)return;showAffInfo(String(ch.data.labels[i]));};}
+wireCat('langDoughnut',LANG_AFF,'Idioma');
+wireCat('langPie',LANG_AFF,'Idioma');
+wireCat('langAffBar',LANG_AFF,'Idioma');
+wireCat('sizeChart',SIZE_AFF,'Tamano');
+wireCat('fontChart',FONT_AFF,'Fuente');
+wireCat('colorChart',COLOR_AFF,'Color');
+wireCat('radiusChart',RADIUS_AFF,'Bordes');
+wireAff('affBar');
+wireAff('affDestBar');
+function hoverPtr(id){var ch=Chart.getChart(id);if(!ch)return;ch.options.onHover=function(e,els){e.native.target.style.cursor=els.length?'pointer':'default';};ch.update();}
+['langDoughnut','langPie','langAffBar','sizeChart','fontChart','colorChart','radiusChart','affBar','affDestBar','evoChart'].forEach(hoverPtr);
+})();
 
-// ── DRILLDOWN MODAL ──────────────────────────────────────
-function showDrill(title, key, dimKey) {
-  const entries = DRILLDOWN[key]?.[dimKey];
-  if (!entries) return;
-  const total = entries.reduce((s,e)=>s+e[1],0);
-  const maxVal = entries[0][1];
-  document.getElementById('drill-title').textContent = title;
-  document.getElementById('drill-meta').textContent = `${entries.length} afiliado${entries.length!==1?'s':''} · ${total} widgets en este segmento`;
-  const tb = document.getElementById('drill-tbody');
-  tb.innerHTML = entries.map(([aff,cnt],i)=>{
-    const pct = (cnt/total*100).toFixed(1);
-    const bw  = (cnt/maxVal*100).toFixed(1);
-    return `<tr>
-      <td class="modal-rank">${i+1}</td>
-      <td><strong>${aff}</strong></td>
-      <td>${cnt}</td>
-      <td>${pct}%</td>
-      <td><div class="modal-bar-row"><div class="modal-bar-track"><div class="modal-bar-fill" style="width:${bw}%"></div></div><span style="font-size:10px;color:#9ca3af;min-width:24px;text-align:right">${cnt}</span></div></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('drill-overlay').classList.add('open');
-}
-function hideDrill() { document.getElementById('drill-overlay').classList.remove('open'); }
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') hideDrill(); });
-
-// Helper: build onClick for chart
-function drillClick(key, labelMap) {
-  return (evt, elements, chart) => {
-    if (!elements.length) return;
-    const rawLabel = chart.data.labels[elements[0].index];
-    const dimKey = labelMap ? labelMap[rawLabel] : rawLabel;
-    if (!dimKey || !DRILLDOWN[key]?.[dimKey]) return;
-    showDrill(rawLabel, key, dimKey);
-  };
-}
-const FONTS  = [["Montserrat",415],["OpenSans",21],["Inter",2],["Roboto",1]];
-const RADII  = [["Redondeado (1)",405],["Cuadrado (0)",34]];
-const COLORS_RAW = [
-  ["#ea0558",178],["#397cef",134],["#0587eb",28],["#eb9705",22],["#006599",12],
-  ["#05b1eb",12],["#eba205",10],["#faac3d",8],["#f9960b",4],["#eb8b05",4],
-  ["#f9a42b",3],["#eb8005",3],["#faad3e",3],["#d35400",3],["#608c3a",2],
-  ["#f9ab3d",2],["#e80920",2],["#f9aa3a",1],["#f9ac3e",1],["#050505",1],
-  ["#75aaf0",1],["#0cc0df",1],["#1e73be",1],["#059eeb",1],["#f9a733",1]
-];
-// Group minor colors into "Otros"
-const TOP_COLORS = COLORS_RAW.slice(0,7);
-const otrosSum = COLORS_RAW.slice(7).reduce((s,c)=>s+c[1],0);
-const COLORS_CHART = [...TOP_COLORS, ["Otros",otrosSum]];
-
-// ── COLORS ──────────────────────────────────────────────
-const PINK='#ea0558',PINK2='#ff3d75',PINK_A='rgba(234,5,88,0.25)';
-const BLUE='#1a73e8',GREEN='#16a34a',ORANGE='#d97706',PURPLE='#7c3aed',DARK='#1a1a2e',GRAY='#6b7280';
-const LANG_COLORS=[PINK,BLUE,GREEN,ORANGE,PURPLE];
-
-Chart.defaults.font.family="'Montserrat',Arial,sans-serif";
-Chart.defaults.font.size=11.5;
-Chart.defaults.color=GRAY;
-
-// ── TABS ────────────────────────────────────────────────
-function showTab(name,btn){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ── TABLES ──────────────────────────────────────────────
-function buildRankTable(tbodyId, data, total, maxVal) {
-  const tb = document.getElementById(tbodyId);
-  data.forEach(([id,cnt],i)=>{
-    const pct=(cnt/total*100).toFixed(1);
-    const bw=(cnt/maxVal*100).toFixed(1);
-    tb.innerHTML+=`<tr>
-      <td class="rank">${i+1}</td><td><strong>${id}</strong></td><td>${cnt}</td><td>${pct}%</td>
-      <td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:${bw}%"></div></div>
-      <span style="font-size:11px;color:#9ca3af;min-width:28px;text-align:right">${cnt}</span></div></td>
-    </tr>`;
-  });
-}
-buildRankTable('aff-widgets-tbody', AFFS, 439, 182);
-buildRankTable('aff-dest-tbody', DESTS, 325, 162);
-
-// Color table
-const colorTb = document.getElementById('color-tbody');
-COLORS_RAW.forEach(([hex,cnt],i)=>{
-  const pct=(cnt/439*100).toFixed(1);
-  const bw=(cnt/178*100).toFixed(1);
-  colorTb.innerHTML+=`<tr>
-    <td class="rank">${i+1}</td>
-    <td><span class="color-swatch" style="background:${hex}"></span><strong>${hex}</strong></td>
-    <td>${cnt}</td><td>${pct}%</td>
-    <td><div class="bar-row"><div class="bar-track"><div class="bar-fill" style="width:${bw}%;background:${hex}"></div></div></div></td>
-  </tr>`;
-});
-
-// ── CHARTS ──────────────────────────────────────────────
-window.addEventListener('load', ()=>{
-  const avg=+(DAILY.reduce((s,d)=>s+d[1],0)/DAILY.length).toFixed(1);
-  const noLegend={legend:{display:false}};
-  const gridLight={grid:{color:'#f0f0f0'}};
-  const noGrid={grid:{display:false}};
-  const cursor={cursor:'pointer'};
-
-  const LANG_MAP={'Español':'es','Italiano':'it','Portugués':'pt','Inglés':'en','Francés':'fr'};
-  const LANG_MAP2={'Español (61,7%)':'es','Italiano (31,4%)':'it','Portugués (4,3%)':'pt','Inglés (1,6%)':'en','Francés (0,9%)':'fr'};
-  const FONT_MAP={'Montserrat':'Montserrat','OpenSans':'OpenSans','Inter':'Inter','Roboto':'Roboto'};
-  // size & radius & week labels match drilldown keys directly
-
-  // Overview lang doughnut
-  new Chart(document.getElementById('c-lang-overview'),{
-    type:'doughnut',
-    data:{labels:['Español','Italiano','Portugués','Inglés','Francés'],
-      datasets:[{data:LANG.map(d=>d[1]),backgroundColor:LANG_COLORS,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:drillClick('lang',LANG_MAP),
-      plugins:{legend:{position:'right',labels:{padding:14,font:{size:11.5}}},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} (${(c.raw/439*100).toFixed(1)}%) · clic para desglose`}}}}
-  });
-  document.getElementById('c-lang-overview').style.cursor='pointer';
-
-  // Overview weeks
-  new Chart(document.getElementById('c-week-overview'),{
-    type:'bar',
-    data:{labels:WEEKS.map(w=>w.l),
-      datasets:[{label:'Widgets',data:WEEKS.map(w=>w.v),
-        backgroundColor:WEEKS.map((_,i)=>i===3?PINK:PINK_A),borderRadius:6,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:noLegend,
-      onClick:drillClick('week',null),
-      scales:{y:{...gridLight,beginAtZero:true},x:noGrid}}
-  });
-  document.getElementById('c-week-overview').style.cursor='pointer';
-
-  // Daily bar
-  function buildDaily(id){
-    new Chart(document.getElementById(id),{
-      type:'bar',
-      data:{labels:DAILY.map(d=>d[0]),
-        datasets:[
-          {label:'Widgets/día',data:DAILY.map(d=>d[1]),
-            backgroundColor:DAILY.map(d=>d[1]>=50?PINK:PINK_A),borderRadius:4,borderSkipped:false,order:2},
-          {label:`Media (${avg}/día)`,data:Array(DAILY.length).fill(avg),
-            type:'line',borderColor:DARK,borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,order:1}
-        ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        onClick:drillClick('date',null),
-        plugins:{legend:{position:'top',labels:{font:{size:11}}}},
-        scales:{y:{...gridLight,beginAtZero:true},x:{...noGrid,ticks:{maxRotation:45,font:{size:10}}}}}
-    });
-    document.getElementById(id).style.cursor='pointer';
-  }
-  buildDaily('c-daily-overview');
-
-  // Lang pie (Por Idioma tab)
-  new Chart(document.getElementById('c-lang-pie'),{
-    type:'pie',
-    data:{labels:['Español (61,7%)','Italiano (31,4%)','Portugués (4,3%)','Inglés (1,6%)','Francés (0,9%)'],
-      datasets:[{data:LANG.map(d=>d[1]),backgroundColor:LANG_COLORS,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:drillClick('lang',LANG_MAP2),
-      plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:11}}}}}
-  });
-  document.getElementById('c-lang-pie').style.cursor='pointer';
-
-  // Lang bar horizontal
-  new Chart(document.getElementById('c-lang-bar'),{
-    type:'bar',
-    data:{labels:['Español','Italiano','Portugués','Inglés','Francés'],
-      datasets:[{data:LANG.map(d=>d[1]),backgroundColor:LANG_COLORS,borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:noLegend,
-      onClick:drillClick('lang',LANG_MAP),
-      scales:{x:{...gridLight,beginAtZero:true},y:noGrid}}
-  });
-  document.getElementById('c-lang-bar').style.cursor='pointer';
-
-  // Affiliates widgets bar (no drilldown needed — ya muestra afiliados)
-  const top10=AFFS.slice(0,10);
-  new Chart(document.getElementById('c-aff-bar'),{
-    type:'bar',
-    data:{labels:top10.map(a=>a[0]),
-      datasets:[{label:'Widgets',data:top10.map(a=>a[1]),
-        backgroundColor:top10.map((_,i)=>i===0?PINK:i===1?PINK2:PINK_A),borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:noLegend,
-      scales:{x:{...gridLight,beginAtZero:true},y:{...noGrid,ticks:{font:{size:11}}}}}
-  });
-
-  // Dest bar
-  const top10d=DESTS.slice(0,10);
-  new Chart(document.getElementById('c-dest-bar'),{
-    type:'bar',
-    data:{labels:top10d.map(a=>a[0]),
-      datasets:[{label:'Destinos únicos',data:top10d.map(a=>a[1]),
-        backgroundColor:top10d.map((_,i)=>i===0?GREEN:'rgba(22,163,74,0.3)'),borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:noLegend,
-      scales:{x:{...gridLight,beginAtZero:true},y:{...noGrid,ticks:{font:{size:11}}}}}
-  });
-
-  // Affiliates pie / Dest pie — sin drilldown (ya muestran afiliados)
-  new Chart(document.getElementById('c-aff-pie'),{
-    type:'doughnut',
-    data:{labels:['Aff 5344 (182)','Aff 101163 (115)','Resto top-10 (109)','Long tail (33)'],
-      datasets:[{data:[182,115,109,33],backgroundColor:[PINK,PINK2,'rgba(234,5,88,0.4)','#e5e7eb'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${(c.raw/439*100).toFixed(1)}%`}}}}
-  });
-  new Chart(document.getElementById('c-dest-pie'),{
-    type:'doughnut',
-    data:{labels:['Aff 5344 (162)','Aff 101163 (62)','Resto top-10 (86)','Long tail (15)'],
-      datasets:[{data:[162,62,86,15],backgroundColor:[GREEN,'rgba(22,163,74,0.7)','rgba(22,163,74,0.4)','#e5e7eb'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${(c.raw/325*100).toFixed(1)}%`}}}}
-  });
-
-  // UX: Widget size — con drilldown
-  new Chart(document.getElementById('c-size'),{
-    type:'doughnut',
-    data:{labels:SIZES.map(s=>s[0]),
-      datasets:[{data:SIZES.map(s=>s[1]),backgroundColor:[PINK,BLUE,ORANGE],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:drillClick('size',null),
-      plugins:{legend:{position:'bottom',labels:{padding:10,font:{size:11},
-        generateLabels:ch=>ch.data.labels.map((l,i)=>({text:`${l} — ${(ch.data.datasets[0].data[i]/439*100).toFixed(1)}%`,fillStyle:ch.data.datasets[0].backgroundColor[i],strokeStyle:'#fff',lineWidth:2,hidden:false,index:i}))
-      }},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} widgets · clic para desglose`}}}}
-  });
-  document.getElementById('c-size').style.cursor='pointer';
-
-  // UX: Font — con drilldown
-  const FONT_LABEL_MAP={};
-  FONTS.forEach(f=>{ FONT_LABEL_MAP[f[0]]=f[0]; });
-  new Chart(document.getElementById('c-font'),{
-    type:'doughnut',
-    data:{labels:FONTS.map(f=>f[0]),
-      datasets:[{data:FONTS.map(f=>f[1]),backgroundColor:[PINK,BLUE,GREEN,ORANGE],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:drillClick('font',FONT_LABEL_MAP),
-      plugins:{legend:{position:'bottom',labels:{padding:10,font:{size:11},
-        generateLabels:ch=>ch.data.labels.map((l,i)=>({text:`${l} — ${(ch.data.datasets[0].data[i]/439*100).toFixed(1)}%`,fillStyle:ch.data.datasets[0].backgroundColor[i],strokeStyle:'#fff',lineWidth:2,hidden:false,index:i}))
-      }},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} · clic para desglose`}}}}
-  });
-  document.getElementById('c-font').style.cursor='pointer';
-
-  // UX: Radius — con drilldown
-  new Chart(document.getElementById('c-radius'),{
-    type:'doughnut',
-    data:{labels:RADII.map(r=>r[0]),
-      datasets:[{data:RADII.map(r=>r[1]),backgroundColor:[PURPLE,'#e5e7eb'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:drillClick('radius',null),
-      plugins:{legend:{position:'bottom',labels:{padding:10,font:{size:11},
-        generateLabels:ch=>ch.data.labels.map((l,i)=>({text:`${l} — ${(ch.data.datasets[0].data[i]/439*100).toFixed(1)}%`,fillStyle:ch.data.datasets[0].backgroundColor[i],strokeStyle:'#fff',lineWidth:2,hidden:false,index:i}))
-      }},
-        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} · clic para desglose`}}}}
-  });
-  document.getElementById('c-radius').style.cursor='pointer';
-
-  // UX: Button color pie — con drilldown (solo colores con datos propios)
-  new Chart(document.getElementById('c-color-pie'),{
-    type:'pie',
-    data:{
-      labels:COLORS_CHART.map(([hex,cnt])=>hex==='Otros'?`Otros (${cnt})`:`${hex} (${cnt})`),
-      datasets:[{data:COLORS_CHART.map(c=>c[1]),
-        backgroundColor:COLORS_CHART.map(([hex])=>hex==='Otros'?'#e5e7eb':hex),
-        borderWidth:2,borderColor:'#fff'}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:(evt,elements,chart)=>{
-        if(!elements.length) return;
-        const i=elements[0].index;
-        const [hex]=COLORS_CHART[i];
-        if(hex==='Otros') return;
-        showDrill(`Color ${hex}`, 'color', hex);
-      },
-      plugins:{legend:{position:'right',labels:{padding:10,font:{size:11},
-        generateLabels:(chart)=>chart.data.labels.map((label,i)=>({
-          text:label,fillStyle:chart.data.datasets[0].backgroundColor[i],
-          strokeStyle:'#fff',lineWidth:2,hidden:false,index:i}))
-      }},
-        tooltip:{callbacks:{label:c=>` ${COLORS_CHART[c.dataIndex][0]}: ${c.raw} (${(c.raw/439*100).toFixed(1)}%) · clic para desglose`}}
-      }}
-  });
-  document.getElementById('c-color-pie').style.cursor='pointer';
-});
-</script>
-</body>
-</html>
+</script></body></html>
